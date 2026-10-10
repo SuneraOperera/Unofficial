@@ -1,2 +1,1161 @@
-# ProducerLK
-My personal website
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProducerLK — Photographer &amp; Post-Production Artist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0a0c0f;
+    --panel:#14171c;
+    --panel-2:#1b1f26;
+    --ink:#eae7e1;
+    --muted:#8b909a;
+    --amber:#ffb27a;
+    --cyan:#6fe3e0;
+    --violet:#b8a6ff;
+    --line: rgba(234,231,225,0.10);
+    --mx:50%;
+    --my:50%;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--amber);color:#0a0c0f;}
+
+  /* ---------- loader ---------- */
+  #loader{
+    position:fixed; inset:0; z-index:999; background:var(--void);
+    display:flex; align-items:center; justify-content:center;
+    transition:opacity .7s ease, visibility .7s ease;
+  }
+  #loader.hide{opacity:0; visibility:hidden;}
+  #loader .aperture{width:48px; height:48px; animation:loaderSpin 1.6s linear infinite;}
+  @keyframes loaderSpin{ to{ transform:rotate(360deg); } }
+
+  /* ---------- scroll progress ---------- */
+  #scrollbar{
+    position:fixed; top:0; left:0; height:3px; width:0%;
+    background:linear-gradient(90deg, var(--amber), var(--cyan));
+    z-index:200; transition:width .1s linear;
+  }
+
+  /* ---------- stagger text ---------- */
+  .stagger-word{display:inline-block; overflow:hidden; vertical-align:top;}
+  .stagger-word span{display:inline-block; transform:translateY(115%); animation:wordUp .9s cubic-bezier(.16,1,.3,1) forwards;}
+  @keyframes wordUp{ to{ transform:translateY(0); } }
+
+  /* ---------- magnetic buttons ---------- */
+  .btn{will-change:transform;}
+
+  .noise{
+    position:fixed; inset:0; pointer-events:none; z-index:2;
+    opacity:0.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- neon light strips (ambient background) ---------- */
+  #neon-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    overflow:hidden;
+  }
+  #neon-bg .strip{
+    position:absolute;
+    top:-10%;
+    width:2px;
+    height:120%;
+    filter:blur(6px);
+    opacity:0.55;
+    border-radius:100px;
+  }
+  #neon-bg .strip.amber{ background:linear-gradient(180deg, transparent, var(--amber), transparent); box-shadow:0 0 24px var(--amber); }
+  #neon-bg .strip.cyan{ background:linear-gradient(180deg, transparent, var(--cyan), transparent); box-shadow:0 0 24px var(--cyan); }
+  #neon-bg .strip.violet{ background:linear-gradient(180deg, transparent, var(--violet), transparent); box-shadow:0 0 24px var(--violet); }
+
+  #neon-bg .s1{ left:6%;  width:2px; animation:driftX1 16s ease-in-out infinite; }
+  #neon-bg .s2{ left:22%; width:3px; animation:driftX2 22s ease-in-out infinite; }
+  #neon-bg .s3{ left:48%; width:2px; animation:driftX3 19s ease-in-out infinite; }
+  #neon-bg .s4{ left:68%; width:3px; animation:driftX1 24s ease-in-out infinite reverse; }
+  #neon-bg .s5{ left:85%; width:2px; animation:driftX2 18s ease-in-out infinite reverse; }
+  #neon-bg .s6{ left:36%; width:2px; animation:driftX3 27s ease-in-out infinite; }
+
+  @keyframes driftX1{
+    0%,100%{ transform:translateX(0) scaleY(1); }
+    50%{ transform:translateX(4vw) scaleY(1.15); }
+  }
+  @keyframes driftX2{
+    0%,100%{ transform:translateX(0) scaleY(1); }
+    50%{ transform:translateX(-5vw) scaleY(0.9); }
+  }
+  @keyframes driftX3{
+    0%,100%{ transform:translateX(0) scaleY(1); opacity:0.5; }
+    50%{ transform:translateX(3vw) scaleY(1.1); opacity:0.75; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    #neon-bg .strip{ animation:none !important; }
+  }
+
+  h1,h2,h3,.display{font-family:'Fraunces',serif;font-weight:500;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;letter-spacing:0.02em;}
+
+  a{color:inherit;text-decoration:none;}
+  section{position:relative; padding:150px 8vw; max-width:1400px; margin:0 auto;}
+  @media(max-width:768px){section{padding:100px 6vw;}}
+
+  /* ---------- glass core ---------- */
+  .glass{
+    position:relative;
+    background:linear-gradient(155deg, rgba(255,255,255,0.07), rgba(255,255,255,0.015) 60%);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    border:1px solid var(--line);
+    border-radius:22px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.18),
+      inset 0 0 40px rgba(255,255,255,0.02),
+      0 20px 60px -10px rgba(0,0,0,0.55);
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .glass::before{
+    content:'';
+    position:absolute; z-index:0;
+    top:var(--my); left:var(--mx);
+    width:380px; height:380px;
+    background:radial-gradient(circle, rgba(255,255,255,0.22), rgba(255,255,255,0.04) 45%, transparent 70%);
+    transform:translate(-50%,-50%);
+    opacity:0; transition:opacity .4s ease;
+    pointer-events:none;
+  }
+  .glass:hover::before{opacity:1;}
+  .glass::after{
+    content:'';
+    position:absolute; inset:0; z-index:0; border-radius:inherit;
+    background:linear-gradient(120deg, transparent 30%, rgba(111,227,224,0.10), transparent 60%);
+    background-size:250% 250%;
+    background-position:var(--mx) var(--my);
+    opacity:0; transition:opacity .4s ease;
+    pointer-events:none;
+    mix-blend-mode:screen;
+  }
+  .glass:hover::after{opacity:1;}
+  .glass > *{position:relative; z-index:1;}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed; top:22px; left:50%; transform:translateX(-50%);
+    z-index:100; display:flex; align-items:center; gap:6px;
+    padding:10px 10px 10px 18px; border-radius:100px;
+    width:min(720px, 90vw); justify-content:space-between;
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-size:15px; font-weight:500;}
+  .brand .mono{color:var(--muted); font-size:11px;}
+  .navlinks{display:flex; gap:2px;}
+  .navlinks a{
+    font-size:13px; padding:9px 16px; border-radius:100px; color:var(--muted);
+    transition:color .25s, background .25s;
+  }
+  .navlinks a:hover{color:var(--ink); background:rgba(255,255,255,0.06);}
+  @media(max-width:640px){ .navlinks{display:none;} }
+
+  /* ---------- aperture logo ---------- */
+  .aperture{width:26px; height:26px;}
+  .aperture path{ transform-origin:50% 50%; transition:transform .6s cubic-bezier(.2,.8,.2,1); }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding-top:120px;
+    overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute; inset:0; z-index:0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 70% 10%, rgba(255,178,122,0.14), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 20% 90%, rgba(111,227,224,0.10), transparent 60%),
+      linear-gradient(180deg, rgba(10,12,15,0.55), rgba(10,12,15,0.92) 70%),
+      url('https://picsum.photos/id/1050/1800/1200');
+    background-size:cover; background-position:center;
+    filter:saturate(0.85) contrast(1.05);
+    animation:heroKenBurns 26s ease-in-out infinite alternate;
+  }
+  @keyframes heroKenBurns{
+    0%{transform:scale(1) translate(0,0);}
+    100%{transform:scale(1.12) translate(-1.5%, -1.5%);}
+  }
+  .hero > *{position:relative; z-index:1;}
+  .hero-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:center;}
+  @media(max-width:900px){ .hero-grid{grid-template-columns:1fr;} }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.14em;
+    margin-bottom:22px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber);}
+
+  .hero h1{
+    font-size:clamp(48px, 7vw, 84px);
+    line-height:0.98;
+    color:var(--ink);
+  }
+  .hero h1 em{
+    font-style:italic; color:var(--amber);
+    background:linear-gradient(90deg, var(--amber), var(--cyan));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.lede{
+    margin-top:26px; font-size:17px; color:var(--muted); max-width:480px; line-height:1.65;
+  }
+  .cta-row{display:flex; gap:14px; margin-top:40px; flex-wrap:wrap;}
+  .btn{
+    padding:15px 28px; border-radius:100px; font-size:14px; font-weight:500;
+    display:inline-flex; align-items:center; gap:8px; transition:transform .3s, box-shadow .3s;
+  }
+  .btn-solid{background:var(--ink); color:#0a0c0f;}
+  .btn-solid:hover{transform:translateY(-2px); box-shadow:0 14px 30px -8px rgba(255,255,255,0.25);}
+  .btn-ghost{border:1px solid var(--line); color:var(--ink);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.06); transform:translateY(-2px);}
+
+  /* aperture visual */
+  .iris-wrap{
+    position:relative; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
+  }
+  .iris-wrap .glass{width:100%; height:100%; border-radius:32px; display:flex; align-items:center; justify-content:center;}
+  #iris{width:70%; height:70%;}
+  .blade{
+    transform-origin:150px 150px;
+    fill:url(#bladeGrad);
+    transition:transform 1.4s cubic-bezier(.16,1,.3,1);
+  }
+  .iris-caption{
+    position:absolute; bottom:26px; left:26px; right:26px;
+    display:flex; justify-content:space-between;
+    font-size:11px; color:var(--muted);
+  }
+
+  .exif-strip{
+    display:flex; gap:26px; margin-top:56px; flex-wrap:wrap;
+    font-size:11px; color:var(--muted);
+  }
+  .exif-strip span b{color:var(--ink); font-weight:500;}
+
+  /* ---------- section headers ---------- */
+  .sec-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:56px; gap:20px; flex-wrap:wrap;}
+  .sec-head .eyebrow{margin-bottom:14px;}
+  .sec-head h2{font-size:clamp(30px,4vw,46px);}
+  .sec-head p{color:var(--muted); max-width:340px; font-size:14px; line-height:1.6;}
+
+  /* ---------- toolkit ---------- */
+  .toolkit-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  @media(max-width:900px){.toolkit-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.toolkit-grid{grid-template-columns:1fr;}}
+  .tool-card{padding:30px 24px; min-height:220px; display:flex; flex-direction:column; justify-content:space-between;}
+  .tool-mark{font-size:12px; color:var(--muted); margin-bottom:20px;}
+  .tool-card h3{font-size:20px; margin-bottom:8px;}
+  .tool-card p{font-size:13px; color:var(--muted); line-height:1.6;}
+  .tool-card .signal{font-size:10px; color:var(--cyan); margin-top:18px;}
+
+  /* ---------- live tool visuals ---------- */
+  .tool-visual{
+    position:relative; height:64px; margin-bottom:18px;
+    border-radius:10px; background:rgba(255,255,255,0.03);
+    border:1px solid var(--line); overflow:hidden;
+  }
+
+  /* Photoshop: shuffling layer stack + marquee select */
+  .visual-ps{ padding:12px; }
+  .ps-layer{
+    position:absolute; height:12px; border-radius:3px;
+    background:linear-gradient(90deg, var(--amber), transparent);
+    opacity:0.7;
+  }
+  .ps-layer.l1{ top:12px; left:14px; width:70%; animation:psShift 5s ease-in-out infinite; }
+  .ps-layer.l2{ top:28px; left:14px; width:55%; background:linear-gradient(90deg, var(--cyan), transparent); animation:psShift 5s ease-in-out infinite .5s; }
+  .ps-layer.l3{ top:44px; left:14px; width:40%; background:linear-gradient(90deg, var(--violet), transparent); animation:psShift 5s ease-in-out infinite 1s; }
+  @keyframes psShift{
+    0%,100%{ transform:translateX(0); opacity:0.5; }
+    50%{ transform:translateX(10px); opacity:0.9; }
+  }
+  .ps-marquee{
+    position:absolute; top:8px; left:60%; width:34px; height:34px;
+    border:1.5px dashed rgba(234,231,225,0.55); border-radius:4px;
+    animation:psMarquee 6s ease-in-out infinite;
+  }
+  @keyframes psMarquee{
+    0%,100%{ left:55%; top:8px; }
+    50%{ left:20%; top:18px; }
+  }
+
+  /* Lightroom: animated tone curve sweep */
+  .visual-lr{ padding:8px 12px; }
+  .visual-lr svg{ width:100%; height:100%; }
+  .lr-curve{
+    stroke:var(--amber); stroke-width:2; stroke-linecap:round;
+    stroke-dasharray:260; stroke-dashoffset:260;
+    animation:lrDraw 3.2s ease-in-out infinite alternate;
+    filter:drop-shadow(0 0 4px rgba(255,178,122,0.5));
+  }
+  @keyframes lrDraw{
+    0%{ stroke-dashoffset:260; }
+    100%{ stroke-dashoffset:0; }
+  }
+  .lr-dot{
+    position:absolute; width:6px; height:6px; border-radius:50%;
+    background:var(--cyan); box-shadow:0 0 10px var(--cyan);
+    animation:lrDot 3.2s ease-in-out infinite alternate;
+    top:6px; left:6px;
+  }
+  @keyframes lrDot{
+    0%{ left:6px; top:44px; }
+    100%{ left:90%; top:6px; }
+  }
+
+  /* Premiere Pro: moving playhead over clip track */
+  .visual-pr{ padding:14px 12px; }
+  .pr-track{ position:relative; display:flex; gap:4px; height:34px; }
+  .pr-clip{ height:100%; border-radius:4px; opacity:0.75; }
+  .pr-clip.c1{ width:28%; background:linear-gradient(180deg, var(--amber), transparent); }
+  .pr-clip.c2{ width:40%; background:linear-gradient(180deg, var(--violet), transparent); }
+  .pr-clip.c3{ width:22%; background:linear-gradient(180deg, var(--cyan), transparent); }
+  .pr-playhead{
+    position:absolute; top:6px; bottom:6px; left:0; width:2px;
+    background:var(--ink); box-shadow:0 0 8px var(--ink);
+    animation:prScrub 4.5s linear infinite;
+  }
+  @keyframes prScrub{
+    0%{ left:0%; }
+    100%{ left:96%; }
+  }
+
+  /* Audition: live equalizer waveform */
+  .visual-au{ display:flex; align-items:center; justify-content:center; gap:4px; padding:0 14px; }
+  .au-wave{ display:flex; align-items:center; gap:4px; height:100%; }
+  .au-wave span{
+    width:3px; border-radius:2px;
+    background:linear-gradient(180deg, var(--cyan), var(--amber));
+    height:20%;
+    animation:auBar 1.1s ease-in-out infinite;
+  }
+  .au-wave span:nth-child(1){ animation-delay:0.0s; }
+  .au-wave span:nth-child(2){ animation-delay:0.08s; }
+  .au-wave span:nth-child(3){ animation-delay:0.16s; }
+  .au-wave span:nth-child(4){ animation-delay:0.24s; }
+  .au-wave span:nth-child(5){ animation-delay:0.32s; }
+  .au-wave span:nth-child(6){ animation-delay:0.4s; }
+  .au-wave span:nth-child(7){ animation-delay:0.48s; }
+  .au-wave span:nth-child(8){ animation-delay:0.56s; }
+  .au-wave span:nth-child(9){ animation-delay:0.48s; }
+  .au-wave span:nth-child(10){ animation-delay:0.4s; }
+  .au-wave span:nth-child(11){ animation-delay:0.32s; }
+  .au-wave span:nth-child(12){ animation-delay:0.24s; }
+  .au-wave span:nth-child(13){ animation-delay:0.16s; }
+  .au-wave span:nth-child(14){ animation-delay:0.08s; }
+  .au-wave span:nth-child(15){ animation-delay:0.0s; }
+  @keyframes auBar{
+    0%,100%{ height:18%; }
+    50%{ height:85%; }
+  }
+
+  /* ---------- portfolio ---------- */
+  .grid-gallery{
+    display:grid; grid-template-columns:repeat(6,1fr); gap:16px;
+  }
+  .g-item{
+    position:relative; border-radius:18px; overflow:hidden; cursor:pointer;
+    grid-column:span 3;
+    perspective:1000px;
+    opacity:0; transform:translateY(40px);
+    transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);
+  }
+  .g-item.in{opacity:1; transform:translateY(0);}
+  .g-item.tall{grid-row:span 2;}
+  @media(max-width:900px){ .g-item{grid-column:span 6;} }
+  .g-frame{position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .25s ease-out;}
+  .g-item img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:saturate(0.9) contrast(1.05);
+    transition:transform 8s cubic-bezier(.25,.1,.25,1), filter .6s;
+    aspect-ratio:4/5;
+    transform:scale(1.14);
+  }
+  .g-item.tall img{aspect-ratio:4/6.4;}
+  .g-item.in img{transform:scale(1.0);}
+  .g-item:hover img{transform:scale(1.08) !important; filter:saturate(1.08) contrast(1.1); transition:transform 1s cubic-bezier(.16,1,.3,1), filter .6s;}
+  .g-wipe{
+    position:absolute; inset:0; z-index:2;
+    background:linear-gradient(100deg, var(--panel-2), var(--panel));
+    transform:scaleX(1); transform-origin:left;
+    transition:transform 1s cubic-bezier(.76,0,.24,1);
+  }
+  .g-item.in .g-wipe{transform:scaleX(0);}
+  .g-shine{
+    position:absolute; inset:0; z-index:3; pointer-events:none;
+    background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
+    transform:translateX(-120%);
+    transition:transform .9s ease;
+  }
+  .g-item:hover .g-shine{transform:translateX(120%);}
+  .g-overlay{
+    position:absolute; left:12px; right:12px; bottom:12px;
+    padding:14px 16px; border-radius:14px;
+    opacity:0; transform:translateY(10px);
+    transition:opacity .4s, transform .4s;
+  }
+  .g-item:hover .g-overlay{opacity:1; transform:translateY(0);}
+  .g-overlay .cap-title{font-size:13px; font-weight:500; margin-bottom:6px;}
+  .g-overlay .cap-exif{display:flex; gap:12px; font-size:10px; color:var(--cyan);}
+
+  /* ---------- motion & sound media cards ---------- */
+  .media-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  @media(max-width:900px){ .media-grid{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:560px){ .media-grid{ grid-template-columns:1fr; } }
+
+  .media-card{
+    position:relative; border-radius:18px; overflow:hidden;
+    aspect-ratio:4/5; cursor:pointer;
+  }
+  .video-card img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:saturate(0.85) contrast(1.05) brightness(0.75);
+    transition:transform 1s cubic-bezier(.16,1,.3,1), filter .5s;
+    transform:scale(1.05);
+  }
+  .video-card:hover img{ transform:scale(1.12); filter:saturate(1.05) contrast(1.08) brightness(0.85); }
+  .media-scrub{
+    position:absolute; left:0; bottom:0; height:3px; width:0%;
+    background:linear-gradient(90deg, var(--amber), var(--cyan));
+    transition:width .1s linear;
+  }
+  .video-card:hover .media-scrub{ animation:scrubPlay 2.6s linear infinite; }
+  @keyframes scrubPlay{ from{ width:0%; } to{ width:100%; } }
+
+  .play-btn{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:52px; height:52px; border-radius:50%; z-index:4;
+    background:rgba(10,12,15,0.55); border:1px solid rgba(255,255,255,0.35);
+    backdrop-filter:blur(6px);
+    color:var(--ink); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:transform .3s, background .3s;
+  }
+  .media-card:hover .play-btn{ transform:translate(-50%,-50%) scale(1.1); background:rgba(255,178,122,0.25); }
+
+  .media-overlay{
+    position:absolute; left:12px; right:12px; bottom:12px;
+    padding:12px 14px; border-radius:14px;
+    opacity:0; transform:translateY(10px);
+    transition:opacity .4s, transform .4s;
+    z-index:3;
+  }
+  .media-card:hover .media-overlay{ opacity:1; transform:translateY(0); }
+  .media-overlay.static-cap{ opacity:1; transform:translateY(0); position:static; margin-top:14px; }
+  .audio-card .media-overlay.static-cap{ background:none; backdrop-filter:none; border:none; box-shadow:none; padding:0; }
+
+  .audio-card{
+    aspect-ratio:auto; display:flex; flex-direction:column; padding:22px;
+    background:linear-gradient(155deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015) 60%);
+    border:1px solid var(--line);
+  }
+  .audio-face{
+    position:relative; height:110px; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.03); border-radius:14px; margin-bottom:6px;
+  }
+  .audio-face .play-btn{ position:relative; z-index:5; width:40px; height:40px; margin-right:14px; transform:none; top:auto; left:auto; }
+  .audio-card:hover .audio-face .play-btn{ transform:scale(1.08); }
+  .au-wave.big{ display:flex; align-items:center; gap:3px; height:60%; flex:1; }
+  .au-wave.big span{
+    width:3px; border-radius:2px;
+    background:linear-gradient(180deg, var(--cyan), var(--violet));
+    height:25%;
+    animation-play-state:paused;
+    transition:height .3s;
+  }
+  .audio-card:hover .au-wave.big span{ animation:auBar 1s ease-in-out infinite; animation-play-state:running; }
+  .au-wave.big span:nth-child(odd){ height:45%; }
+  .au-wave.big span:nth-child(3n){ height:65%; }
+  .au-wave.big span:nth-child(1){ animation-delay:0s; }
+  .au-wave.big span:nth-child(2){ animation-delay:.06s; }
+  .au-wave.big span:nth-child(3){ animation-delay:.12s; }
+  .au-wave.big span:nth-child(4){ animation-delay:.18s; }
+  .au-wave.big span:nth-child(5){ animation-delay:.24s; }
+  .au-wave.big span:nth-child(6){ animation-delay:.3s; }
+  .au-wave.big span:nth-child(7){ animation-delay:.36s; }
+  .au-wave.big span:nth-child(8){ animation-delay:.42s; }
+  .au-wave.big span:nth-child(9){ animation-delay:.48s; }
+  .au-wave.big span:nth-child(10){ animation-delay:.42s; }
+  .au-wave.big span:nth-child(11){ animation-delay:.36s; }
+  .au-wave.big span:nth-child(12){ animation-delay:.3s; }
+  .au-wave.big span:nth-child(13){ animation-delay:.24s; }
+  .au-wave.big span:nth-child(14){ animation-delay:.18s; }
+  .au-wave.big span:nth-child(15){ animation-delay:.12s; }
+  .au-wave.big span:nth-child(16){ animation-delay:.06s; }
+  .au-wave.big span:nth-child(17){ animation-delay:0s; }
+  .au-wave.big span:nth-child(18){ animation-delay:.06s; }
+  .au-wave.big span:nth-child(19){ animation-delay:.12s; }
+  .au-wave.big span:nth-child(20){ animation-delay:.18s; }
+  .au-wave.big span:nth-child(21){ animation-delay:.24s; }
+  .au-wave.big span:nth-child(22){ animation-delay:.3s; }
+  .au-wave.big span:nth-child(23){ animation-delay:.36s; }
+  .au-wave.big span:nth-child(24){ animation-delay:.42s; }
+
+
+  .audio-card .cap-title{ font-size:13px; font-weight:500; margin-bottom:6px; }
+  .audio-card .cap-exif{ display:flex; gap:12px; font-size:10px; color:var(--cyan); }
+
+  .au-wave.big span:nth-child(7){ animation-delay:.36s; }
+  .au-wave.big span:nth-child(8){ animation-delay:.42s; }
+  .au-wave.big span:nth-child(9){ animation-delay:.48s; }
+  .au-wave.big span:nth-child(10){ animation-delay:.42s; }
+  .au-wave.big span:nth-child(11){ animation-delay:.36s; }
+  .au-wave.big span:nth-child(12){ animation-delay:.3s; }
+  .au-wave.big span:nth-child(13){ animation-delay:.24s; }
+  .au-wave.big span:nth-child(14){ animation-delay:.18s; }
+  .au-wave.big span:nth-child(15){ animation-delay:.12s; }
+  .au-wave.big span:nth-child(16){ animation-delay:.06s; }
+  .au-wave.big span:nth-child(17){ animation-delay:0s; }
+  .au-wave.big span:nth-child(18){ animation-delay:.06s; }
+  .au-wave.big span:nth-child(19){ animation-delay:.12s; }
+  .au-wave.big span:nth-child(20){ animation-delay:.18s; }
+  .au-wave.big span:nth-child(21){ animation-delay:.24s; }
+  .au-wave.big span:nth-child(22){ animation-delay:.3s; }
+  .au-wave.big span:nth-child(23){ animation-delay:.36s; }
+  .au-wave.big span:nth-child(24){ animation-delay:.42s; }
+
+
+  .audio-card .cap-title{ font-size:13px; font-weight:500; margin-bottom:6px; }
+  .audio-card .cap-exif{ display:flex; gap:12px; font-size:10px; color:var(--cyan); }
+
+  /* ---------- services ---------- */
+  .services-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media(max-width:900px){.services-grid{grid-template-columns:1fr;}}
+  .service-card{padding:34px 28px;}
+  .service-card .num{font-size:11px; color:var(--amber);}
+  .service-card h3{font-size:22px; margin:14px 0 10px;}
+  .service-card p{font-size:13.5px; color:var(--muted); line-height:1.7;}
+  .service-card ul{margin-top:18px; font-size:12px; color:var(--muted); list-style:none;}
+  .service-card li{padding:6px 0; border-top:1px solid var(--line); display:flex; justify-content:space-between;}
+  .service-card li:first-child{border-top:none;}
+  .service-card li b{color:var(--ink); font-weight:500;}
+
+  /* ---------- testimonials ---------- */
+  .testi-track{display:flex; gap:20px; overflow-x:auto; padding-bottom:10px; scrollbar-width:none;}
+  .testi-track::-webkit-scrollbar{display:none;}
+  .testi-card{min-width:340px; padding:30px; flex-shrink:0;}
+  .testi-card p{font-size:15px; line-height:1.7; font-family:'Fraunces',serif; font-style:italic;}
+  .testi-who{margin-top:20px; display:flex; justify-content:space-between; font-size:12px; color:var(--muted);}
+
+  /* ---------- contact ---------- */
+  .contact-wrap{display:grid; grid-template-columns:1fr 1fr; gap:40px;}
+  @media(max-width:900px){.contact-wrap{grid-template-columns:1fr;}}
+  .contact-card{padding:44px;}
+  .field{margin-bottom:18px;}
+  .field label{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em;}
+  .field input, .field textarea{
+    width:100%; margin-top:8px; background:rgba(255,255,255,0.04); border:1px solid var(--line);
+    border-radius:12px; padding:13px 14px; color:var(--ink); font-family:'Inter'; font-size:14px;
+    outline:none; transition:border-color .25s, background .25s;
+  }
+  .field input:focus, .field textarea:focus{border-color:var(--cyan); background:rgba(255,255,255,0.06);}
+  .contact-info h3{font-size:26px; margin-bottom:16px;}
+  .contact-info p{color:var(--muted); font-size:14px; line-height:1.7; margin-bottom:26px;}
+  .contact-line{display:flex; justify-content:space-between; padding:14px 0; border-top:1px solid var(--line); font-size:13px;}
+  .contact-line:first-of-type{border-top:none;}
+  .contact-line span:first-child{color:var(--muted);}
+
+  footer{padding:40px 8vw; display:flex; justify-content:space-between; color:var(--muted); font-size:12px; flex-wrap:wrap; gap:10px;}
+
+  /* reveal on scroll */
+  .reveal{opacity:0; transform:translateY(28px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+
+  /* ---------- social links ---------- */
+  .social{display:flex; gap:6px; align-items:center;}
+  .social a{
+    width:34px; height:34px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+    color:var(--muted); border:1px solid var(--line); transition:color .25s, background .25s, transform .25s, border-color .25s;
+  }
+  .social a:hover{color:var(--ink); background:rgba(255,255,255,0.08); border-color:var(--amber); transform:translateY(-2px);}
+  .social svg{width:16px; height:16px; fill:currentColor;}
+  .contact-line a{color:var(--cyan); transition:color .25s;}
+  .contact-line a:hover{color:var(--amber);}
+  footer .social a{width:30px; height:30px;}
+</style>
+</head>
+<body>
+
+<div id="loader"><svg class="aperture" viewBox="0 0 100 100"><path d="M50 5 L61 40 L95 40 L67 60 L78 95 L50 74 L22 95 L33 60 L5 40 L39 40 Z" fill="none" stroke="#ffb27a" stroke-width="4" stroke-linejoin="round"/></svg></div>
+<div id="scrollbar"></div>
+<div id="neon-bg">
+  <div class="strip amber s1"></div>
+  <div class="strip cyan s2"></div>
+  <div class="strip violet s3"></div>
+  <div class="strip cyan s4"></div>
+  <div class="strip amber s5"></div>
+  <div class="strip violet s6"></div>
+</div>
+<div class="noise"></div>
+
+<nav class="glass">
+  <div class="brand">
+    <svg class="aperture" viewBox="0 0 100 100"><path d="M50 5 L61 40 L95 40 L67 60 L78 95 L50 74 L22 95 L33 60 L5 40 L39 40 Z" fill="none" stroke="#eae7e1" stroke-width="4" stroke-linejoin="round"/></svg>
+    <span>ProducerLK <span class="mono">/ f2.8</span></span>
+  </div>
+  <div class="navlinks">
+    <a href="#work">Work</a>
+    <a href="#toolkit">Toolkit</a>
+    <a href="#services">Services</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="social"><a href="https://www.youtube.com/@ProducerLK" target="_blank" rel="noopener noreferrer" aria-label="ProducerLK on YouTube" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg></a><a href="https://www.instagram.com/producer.lk/?hl=en" target="_blank" rel="noopener noreferrer" aria-label="ProducerLK on Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 4 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/></svg></a></div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow"><span class="dot"></span>PHOTOGRAPHER &amp; POST-PRODUCTION ARTIST</div>
+      <h1>
+        <span class="stagger-word"><span style="animation-delay:.05s">Light,</span></span><br>
+        <span class="stagger-word"><span style="animation-delay:.15s">held</span></span> <span class="stagger-word"><span style="animation-delay:.22s">still.</span></span><br>
+        <em><span class="stagger-word"><span style="animation-delay:.32s">Then</span></span> <span class="stagger-word"><span style="animation-delay:.4s">reshaped.</span></span></em>
+      </h1>
+      <p class="lede">I shoot the frame, then take it the rest of the way — retouched in Photoshop, cut in Premiere Pro, graded in Lightroom, and mixed clean in Audition. One person, one continuous process, from shutter to final export.</p>
+      <div class="cta-row">
+        <a href="#work" class="btn btn-solid">View the work →</a>
+        <a href="#contact" class="btn btn-ghost">Start a project</a>
+      </div>
+      <div class="exif-strip mono">
+        <span><b>ISO</b> 200</span>
+        <span><b>f/</b> 1.8</span>
+        <span><b>SS</b> 1/250</span>
+        <span><b>WB</b> 5600K</span>
+        <span><b>LENS</b> 35mm</span>
+      </div>
+    </div>
+
+    <div class="iris-wrap">
+      <div class="glass">
+        <svg id="iris" viewBox="0 0 300 300">
+          <defs>
+            <linearGradient id="bladeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffb27a" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#6fe3e0" stop-opacity="0.7"/>
+            </linearGradient>
+          </defs>
+          <g id="bladeGroup"></g>
+          <circle cx="150" cy="150" r="148" fill="none" stroke="rgba(234,231,225,0.15)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="iris-caption mono">
+        <span>APERTURE.SEQ</span>
+        <span>OPENING…</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOOLKIT ================= -->
+<section id="toolkit">
+  <div class="sec-head reveal">
+    <div>
+      <div class="eyebrow"><span class="dot" style="background:var(--cyan)"></span>THE SIGNAL CHAIN</div>
+      <h2>Four tools,<br>one workflow.</h2>
+    </div>
+    <p>Every deliverable moves through the same chain — capture, retouch, cut, grade, mix — so stills and video come out sounding and looking like they belong together.</p>
+  </div>
+
+  <div class="toolkit-grid tilt-grid">
+    <div class="tool-card glass reveal tilt-card">
+      <div class="tool-mark mono">ADOBE / STILLS</div>
+      <div class="tool-visual visual-ps" aria-hidden="true">
+        <div class="ps-layer l1"></div>
+        <div class="ps-layer l2"></div>
+        <div class="ps-layer l3"></div>
+        <div class="ps-marquee"></div>
+      </div>
+      <div>
+        <h3>Photoshop</h3>
+        <p>Frequency separation retouching, composite work, and print-ready color correction on every selected frame.</p>
+      </div>
+      <div class="signal mono">→ feeds Lightroom</div>
+    </div>
+    <div class="tool-card glass reveal tilt-card">
+      <div class="tool-mark mono">ADOBE / RAW</div>
+      <div class="tool-visual visual-lr" aria-hidden="true">
+        <svg viewBox="0 0 200 60" preserveAspectRatio="none">
+          <polyline class="lr-curve" points="0,55 30,48 60,38 90,30 120,20 150,12 200,4" fill="none"/>
+        </svg>
+        <div class="lr-dot"></div>
+      </div>
+      <div>
+        <h3>Lightroom</h3>
+        <p>Culling, RAW development, and the color grade that gives a whole shoot its consistent, recognizable tone.</p>
+      </div>
+      <div class="signal mono">→ exports to client galleries</div>
+    </div>
+    <div class="tool-card glass reveal tilt-card">
+      <div class="tool-mark mono">ADOBE / MOTION</div>
+      <div class="tool-visual visual-pr" aria-hidden="true">
+        <div class="pr-track">
+          <div class="pr-clip c1"></div>
+          <div class="pr-clip c2"></div>
+          <div class="pr-clip c3"></div>
+        </div>
+        <div class="pr-playhead"></div>
+      </div>
+      <div>
+        <h3>Premiere Pro</h3>
+        <p>Multicam edits, pacing, and color-matched footage cut against the same LUTs used on the stills.</p>
+      </div>
+      <div class="signal mono">→ syncs with Audition</div>
+    </div>
+    <div class="tool-card glass reveal tilt-card">
+      <div class="tool-mark mono">ADOBE / SOUND</div>
+      <div class="tool-visual visual-au" aria-hidden="true">
+        <div class="au-wave">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <div>
+        <h3>Audition</h3>
+        <p>Dialogue cleanup, noise reduction, and a final mix so the audio matches the polish of the picture.</p>
+      </div>
+      <div class="signal mono">→ finishes the deliverable</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WORK ================= -->
+<section id="work">
+  <div class="sec-head reveal">
+    <div>
+      <div class="eyebrow"><span class="dot" style="background:var(--amber)"></span>SELECTED WORK</div>
+      <h2>Recent frames.</h2>
+    </div>
+    <p>Hover any frame for the shot's settings — every image here is edited end to end, not just filtered.</p>
+  </div>
+
+  <div class="grid-gallery">
+    <div class="g-item tall">
+      <div class="g-frame">
+        <img src="https://picsum.photos/id/1015/700/1120" alt="Portrait in natural light">
+        <div class="g-overlay glass">
+          <div class="cap-title">River Portrait, Kandy</div>
+          <div class="cap-exif mono"><span>85mm</span><span>f/1.4</span><span>1/400</span></div>
+        </div>
+        <div class="g-shine"></div>
+      </div>
+      <div class="g-wipe"></div>
+    </div>
+    <div class="g-item">
+      <div class="g-frame">
+        <img src="https://picsum.photos/id/1025/700/560" alt="Editorial studio shot">
+        <div class="g-overlay glass">
+          <div class="cap-title">Studio Series 04</div>
+          <div class="cap-exif mono"><span>50mm</span><span>f/2.0</span><span>1/200</span></div>
+        </div>
+        <div class="g-shine"></div>
+      </div>
+      <div class="g-wipe"></div>
+    </div>
+    <div class="g-item">
+      <div class="g-frame">
+        <img src="https://picsum.photos/id/1005/700/560" alt="Street photography">
+        <div class="g-overlay glass">
+          <div class="cap-title">Negombo Streets</div>
+          <div class="cap-exif mono"><span>35mm</span><span>f/5.6</span><span>1/500</span></div>
+        </div>
+        <div class="g-shine"></div>
+      </div>
+      <div class="g-wipe"></div>
+    </div>
+    <div class="g-item tall">
+      <div class="g-frame">
+        <img src="https://picsum.photos/id/1041/700/1120" alt="Landscape golden hour">
+        <div class="g-overlay glass">
+          <div class="cap-title">Coastal Golden Hour</div>
+          <div class="cap-exif mono"><span>24mm</span><span>f/8</span><span>1/125</span></div>
+        </div>
+        <div class="g-shine"></div>
+      </div>
+      <div class="g-wipe"></div>
+    </div>
+    <div class="g-item">
+      <div class="g-frame">
+        <img src="https://picsum.photos/id/1074/700/560" alt="Product macro">
+        <div class="g-overlay glass">
+          <div class="cap-title">Macro Product Set</div>
+          <div class="cap-exif mono"><span>100mm</span><span>f/4.0</span><span>1/160</span></div>
+        </div>
+        <div class="g-shine"></div>
+      </div>
+      <div class="g-wipe"></div>
+    </div>
+    <div class="g-item">
+      <div class="g-frame">
+        <img src="https://picsum.photos/id/1080/700/560" alt="Event coverage">
+        <div class="g-overlay glass">
+          <div class="cap-title">Wedding Coverage — Reception</div>
+          <div class="cap-exif mono"><span>70mm</span><span>f/2.8</span><span>1/250</span></div>
+        </div>
+        <div class="g-shine"></div>
+      </div>
+      <div class="g-wipe"></div>
+    </div>
+  </div>
+
+  <div class="sec-head reveal" style="margin-top:90px;">
+    <div>
+      <div class="eyebrow"><span class="dot" style="background:var(--violet)"></span>MOTION &amp; SOUND</div>
+      <h2>Premiere Pro &amp;<br>Audition works.</h2>
+    </div>
+    <p>Hover to play the preview — video cuts on the left, audio mixes on the right.</p>
+  </div>
+
+  <div class="media-grid">
+    <div class="media-card video-card reveal">
+      <img src="https://picsum.photos/id/1035/700/460" alt="Wedding highlight film thumbnail">
+      <div class="media-scrub"></div>
+      <button class="play-btn" aria-label="Play preview"><svg viewBox="0 0 24 24" width="18" height="18"><polygon points="5,3 21,12 5,21" fill="currentColor"/></svg></button>
+      <div class="media-overlay glass">
+        <div class="cap-title">Dinusha &amp; Kavindu — Highlight Film</div>
+        <div class="cap-exif mono"><span>1080p / 24fps</span><span>02:14</span></div>
+      </div>
+    </div>
+    <div class="media-card video-card reveal">
+      <img src="https://picsum.photos/id/1011/700/460" alt="Brand commercial edit thumbnail">
+      <div class="media-scrub"></div>
+      <button class="play-btn" aria-label="Play preview"><svg viewBox="0 0 24 24" width="18" height="18"><polygon points="5,3 21,12 5,21" fill="currentColor"/></svg></button>
+      <div class="media-overlay glass">
+        <div class="cap-title">Loom &amp; Leaf — Brand Reel</div>
+        <div class="cap-exif mono"><span>4K / 30fps</span><span>00:48</span></div>
+      </div>
+    </div>
+    <div class="media-card audio-card reveal">
+      <div class="audio-face">
+        <button class="play-btn" aria-label="Play audio preview"><svg viewBox="0 0 24 24" width="16" height="16"><polygon points="5,3 21,12 5,21" fill="currentColor"/></svg></button>
+        <div class="au-wave big" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="media-overlay glass static-cap">
+        <div class="cap-title">Coastal Media Co. — Interview Mix</div>
+        <div class="cap-exif mono"><span>48kHz / WAV</span><span>03:42</span></div>
+      </div>
+    </div>
+    <div class="media-card audio-card reveal">
+      <div class="audio-face">
+        <button class="play-btn" aria-label="Play audio preview"><svg viewBox="0 0 24 24" width="16" height="16"><polygon points="5,3 21,12 5,21" fill="currentColor"/></svg></button>
+        <div class="au-wave big" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="media-overlay glass static-cap">
+        <div class="cap-title">Podcast Ep. 12 — Full Mix &amp; Master</div>
+        <div class="cap-exif mono"><span>44.1kHz / WAV</span><span>28:10</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SERVICES ================= -->
+<section id="services">
+  <div class="sec-head reveal">
+    <div>
+      <div class="eyebrow"><span class="dot" style="background:var(--violet)"></span>SERVICES</div>
+      <h2>Book the chain,<br>or one link of it.</h2>
+    </div>
+    <p>Full production, or a single stage — retouching only, an edit-only pass, or an audio cleanup on footage you already shot.</p>
+  </div>
+
+  <div class="services-grid">
+    <div class="service-card glass reveal">
+      <div class="num mono">STILLS</div>
+      <h3>Photography &amp; Retouch</h3>
+      <p>Portrait, editorial, product, or event shoots — shot, culled, and retouched to a print-ready final file.</p>
+      <ul>
+        <li><span>Shoot + edit</span><b>from LKR 25,000</b></li>
+        <li><span>Retouch only</span><b>from LKR 3,500 / img</b></li>
+        <li><span>Turnaround</span><b>3–5 days</b></li>
+      </ul>
+    </div>
+    <div class="service-card glass reveal">
+      <div class="num mono">MOTION</div>
+      <h3>Video Editing</h3>
+      <p>Premiere Pro edits for weddings, brand content, or short-form — color matched to your stills for a consistent look.</p>
+      <ul>
+        <li><span>Short-form cut</span><b>from LKR 8,000</b></li>
+        <li><span>Full event edit</span><b>from LKR 35,000</b></li>
+        <li><span>Turnaround</span><b>5–7 days</b></li>
+      </ul>
+    </div>
+    <div class="service-card glass reveal">
+      <div class="num mono">AUDIO</div>
+      <h3>Audio Post</h3>
+      <p>Audition cleanup and mixing for interview or event audio — dialogue de-noised, leveled, and mastered.</p>
+      <ul>
+        <li><span>Cleanup pass</span><b>from LKR 4,000</b></li>
+        <li><span>Full mix</span><b>from LKR 10,000</b></li>
+        <li><span>Turnaround</span><b>2–3 days</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section id="testimonials">
+  <div class="sec-head reveal">
+    <div>
+      <div class="eyebrow"><span class="dot" style="background:var(--cyan)"></span>WORDS FROM CLIENTS</div>
+      <h2>What they noticed.</h2>
+    </div>
+  </div>
+  <div class="testi-track reveal">
+    <div class="testi-card glass">
+      <p>"The color grade tied our whole wedding gallery and highlight video together — it didn't feel like two separate deliverables."</p>
+      <div class="testi-who"><span>Dinusha &amp; Kavindu</span><span class="mono">WEDDING</span></div>
+    </div>
+    <div class="testi-card glass">
+      <p>"Fast turnaround and the retouching was invisible — my product shots finally look like the reference images I sent over."</p>
+      <div class="testi-who"><span>Loom &amp; Leaf Studio</span><span class="mono">PRODUCT</span></div>
+    </div>
+    <div class="testi-card glass">
+      <p>"Cleaned up hours of noisy on-location interview audio and I genuinely couldn't tell where the cuts were."</p>
+      <div class="testi-who"><span>Coastal Media Co.</span><span class="mono">AUDIO POST</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="sec-head reveal">
+    <div>
+      <div class="eyebrow"><span class="dot" style="background:var(--amber)"></span>GET IN TOUCH</div>
+      <h2>Tell me about<br>the project.</h2>
+    </div>
+  </div>
+
+  <div class="contact-wrap reveal">
+    <div class="contact-card glass">
+      <form onsubmit="event.preventDefault(); this.querySelector('.submit-note').style.opacity=1;">
+        <div class="field">
+          <label>Name</label>
+          <input type="text" placeholder="Your name" required>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" placeholder="you@email.com" required>
+        </div>
+        <div class="field">
+          <label>What do you need?</label>
+          <textarea rows="4" placeholder="Photography, video editing, audio post, or all three…"></textarea>
+        </div>
+        <button class="btn btn-solid" type="submit" style="width:100%; justify-content:center; border:none; cursor:pointer;">Send message</button>
+        <p class="submit-note mono" style="opacity:0; transition:opacity .4s; font-size:11px; color:var(--cyan); margin-top:12px;">Message ready — connect this form to your email or booking tool.</p>
+      </form>
+    </div>
+    <div class="contact-info">
+      <h3>Based in Gampaha,<br>working island-wide.</h3>
+      <p>Available for editorial, product, and event work across Sri Lanka, and remote retouch / edit / audio-post work for clients anywhere.</p>
+      <div class="contact-line"><span>Email</span><span>suneraperera@gmail.com</span></div>
+      <div class="contact-line"><span>Phone</span><span>+94 71 802 4766</span></div>
+      <div class="contact-line"><span>Instagram</span><span><a href="https://www.instagram.com/producer.lk/?hl=en" target="_blank" rel="noopener noreferrer">@producer.lk</a></span></div>
+      <div class="contact-line"><span>YouTube</span><span><a href="https://www.youtube.com/@ProducerLK" target="_blank" rel="noopener noreferrer">@ProducerLK</a></span></div>
+      <div class="contact-line"><span>Response time</span><span>within 24 hours</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 ProducerLK. All frames retouched, cut, and mixed by hand.</span>
+  <div class="social"><a href="https://www.youtube.com/@ProducerLK" target="_blank" rel="noopener noreferrer" aria-label="ProducerLK on YouTube" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg></a><a href="https://www.instagram.com/producer.lk/?hl=en" target="_blank" rel="noopener noreferrer" aria-label="ProducerLK on Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 4 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/></svg></a></div>
+  <span class="mono">SHOT ON FILM &amp; DIGITAL</span>
+</footer>
+
+<script>
+  // ---- loader ----
+  window.addEventListener('load', ()=>{
+    setTimeout(()=> document.getElementById('loader').classList.add('hide'), 500);
+  });
+
+  // ---- scroll progress bar ----
+  const scrollbar = document.getElementById('scrollbar');
+  window.addEventListener('scroll', ()=>{
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    scrollbar.style.width = pct + '%';
+  }, {passive:true});
+
+  // ---- magnetic buttons ----
+  document.querySelectorAll('.btn').forEach(btn=>{
+    btn.style.transition = 'transform .25s cubic-bezier(.16,1,.3,1)';
+    btn.addEventListener('mousemove', (e)=>{
+      const r = btn.getBoundingClientRect();
+      const mx = (e.clientX - r.left - r.width/2) * 0.3;
+      const my = (e.clientY - r.top - r.height/2) * 0.5;
+      btn.style.transform = `translate(${mx}px, ${my}px)`;
+    });
+    btn.addEventListener('mouseleave', ()=>{ btn.style.transform = 'translate(0,0)'; });
+  });
+
+  // ---- toolkit card tilt ----
+  document.querySelectorAll('.tilt-card').forEach(card=>{
+    card.style.transformStyle = 'preserve-3d';
+    card.style.transition = 'transform .25s ease-out';
+    card.addEventListener('mousemove', (e)=>{
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      const rotX = (0.5 - py) * 7;
+      const rotY = (px - 0.5) * 7;
+      card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', ()=>{
+      card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
+    });
+  });
+
+  // ---- testimonials: slow auto-scroll marquee, pauses on hover/touch ----
+  const track = document.querySelector('.testi-track');
+  if(track){
+    track.innerHTML += track.innerHTML; // duplicate for seamless loop
+    let autoScroll = true;
+    track.addEventListener('mouseenter', ()=> autoScroll = false);
+    track.addEventListener('mouseleave', ()=> autoScroll = true);
+    function marquee(){
+      if(autoScroll){
+        track.scrollLeft += 0.6;
+        if(track.scrollLeft >= track.scrollWidth / 2){ track.scrollLeft = 0; }
+      }
+      requestAnimationFrame(marquee);
+    }
+    marquee();
+  }
+
+  // ---- liquid glass mouse tracking ----
+  document.querySelectorAll('.glass').forEach(el=>{
+    el.addEventListener('mousemove', e=>{
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  // ---- aperture blade build + opening animation ----
+  const bladeGroup = document.getElementById('bladeGroup');
+  const bladeCount = 8;
+  const cx = 150, cy = 150, rOuter = 210, rInner = 34;
+  for(let i=0;i<bladeCount;i++){
+    const angle = (i / bladeCount) * 360;
+    const blade = document.createElementNS('http://www.w3.org/2000/svg','path');
+    const a1 = angle, a2 = angle + (360/bladeCount) + 14;
+    const p1 = polar(cx,cy,rInner,a1), p2 = polar(cx,cy,rOuter,a1+6);
+    const p3 = polar(cx,cy,rOuter,a2), p4 = polar(cx,cy,rInner,a2-6);
+    blade.setAttribute('d', `M ${cx} ${cy} L ${p1.x} ${p1.y} L ${p2.x} ${p2.y} L ${p3.x} ${p3.y} L ${p4.x} ${p4.y} Z`);
+    blade.classList.add('blade');
+    blade.style.transform = 'scale(1.6)';
+    blade.style.transformOrigin = `${cx}px ${cy}px`;
+    bladeGroup.appendChild(blade);
+  }
+  function polar(cx,cy,r,deg){
+    const rad = deg * Math.PI/180;
+    return {x: cx + r*Math.cos(rad), y: cy + r*Math.sin(rad)};
+  }
+  window.addEventListener('load', ()=>{
+    setTimeout(()=>{
+      document.querySelectorAll('.blade').forEach(b=> b.style.transform = 'scale(1)');
+    }, 300);
+  });
+
+  // ---- scroll reveal ----
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){ entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el=> io.observe(el));
+
+  // ---- gallery: staggered wipe reveal + slow ken-burns start ----
+  const gItems = document.querySelectorAll('.g-item');
+  const gio = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const idx = Array.from(gItems).indexOf(entry.target);
+        setTimeout(()=> entry.target.classList.add('in'), idx * 110);
+        gio.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.2});
+  gItems.forEach(el=> gio.observe(el));
+
+  // ---- gallery: 3D tilt + parallax combined on the frame ----
+  gItems.forEach(item=>{
+    const frame = item.querySelector('.g-frame');
+    let parallaxY = 0;
+
+    item.addEventListener('mousemove', (e)=>{
+      const r = item.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;   // 0..1
+      const py = (e.clientY - r.top) / r.height;   // 0..1
+      const rotX = (0.5 - py) * 10;   // tilt range
+      const rotY = (px - 0.5) * 10;
+      frame.style.transform = `translateY(${parallaxY}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    });
+    item.addEventListener('mouseleave', ()=>{
+      frame.style.transform = `translateY(${parallaxY}px) rotateX(0deg) rotateY(0deg)`;
+    });
+
+    // scroll parallax: shift frame slightly opposite to scroll for depth
+    function updateParallax(){
+      const r = item.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const centerOffset = (r.top + r.height/2 - vh/2) / vh; // -0.5..0.5 roughly
+      parallaxY = centerOffset * 22;
+      frame.style.transform = `translateY(${parallaxY}px)`;
+    }
+    updateParallax();
+    window.addEventListener('scroll', ()=> requestAnimationFrame(updateParallax), {passive:true});
+  });
+
+  // ---- hero iris glass: subtle 3D tilt following cursor ----
+  const irisWrap = document.querySelector('.iris-wrap .glass');
+  if(irisWrap){
+    irisWrap.style.transformStyle = 'preserve-3d';
+    irisWrap.style.transition = 'transform .25s ease-out';
+    irisWrap.addEventListener('mousemove', (e)=>{
+      const r = irisWrap.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      const rotX = (0.5 - py) * 8;
+      const rotY = (px - 0.5) * 8;
+      irisWrap.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    });
+    irisWrap.addEventListener('mouseleave', ()=>{
+      irisWrap.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+    });
+  }
+</script>
+
+</body>
+</html>
